@@ -1,5 +1,3 @@
-import dao.UserDao;
-import dao.UserDaoImpl;
 import services.MyServer;
 
 public class MyApp {
