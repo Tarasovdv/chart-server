@@ -1,7 +1,7 @@
 package services;
 
-import dao.UserDao;
-import dao.UserDaoImpl;
+import dao.user.UserDao;
+import dao.user.UserDaoImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import model.User;
@@ -30,12 +30,20 @@ public class ClientRunnable implements Runnable, Observer {
 
         String messageFromUser;
         while ((messageFromUser = readerFromUser.readLine()) != null) {
+
 //            if (messageFromUser.contains("Registration ")) {
-//                System.out.println("Rega");
-//                client = new User(messageFromUser.split(" ")[1],
-//                        messageFromUser.split(" ")[2]);
-//                System.out.println("Rega for " + client.getName() + " success");
+//                String loginFromClient = messageFromUser.split(" ")[1];
+//                String passwordFromClient = messageFromUser.split(" ")[2];
+//
+//                User createUserFromDao = dao.createUser(loginFromClient,passwordFromClient);
+//                client = createUserFromDao;
 //                notifyObserver("Registration successfully!");
+//
+////                System.out.println("Rega");
+////                client = new User(messageFromUser.split(" ")[1],
+////                        messageFromUser.split(" ")[2]);
+////                System.out.println("Rega for " + client.getName() + " success");
+////                notifyObserver("Registration successfully!");
 //            }
 
             if (messageFromUser.contains("Autorization ")) {
@@ -54,6 +62,24 @@ public class ClientRunnable implements Runnable, Observer {
                 System.out.println(messageFromUser);
                 server.notifyObservers(messageFromUser);
             }
+
+//            if (messageFromUser.contains("Delete ")) {
+//                String loginFromClient = messageFromUser.split(" ")[1];
+////                String passwordFromClient = messageFromUser.split(" ")[2];
+//
+//                User userFromDao = dao.deleteUser(loginFromClient);
+//
+//                if (userFromDao.getName().equals(loginFromClient)) {
+////                    client = userFromDao;
+//                    notifyObserver("Delete successfully!");
+//                } else {
+//                    System.out.println("Delete wrong password!");
+//                }
+//            } else {
+//                System.out.println(messageFromUser);
+//                server.notifyObservers(messageFromUser);
+//            }
+
         }
     }
 
