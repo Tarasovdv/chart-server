@@ -3,5 +3,10 @@ package dao.message;
 import model.Message;
 
 public interface MessageDao {
-    Message makeMessage(String name, String message);
+
+    Message findByMessage(Integer idUser);
+
+    void createMessage(Message message);
+
+    Message deleteMessage(Integer id);
 }

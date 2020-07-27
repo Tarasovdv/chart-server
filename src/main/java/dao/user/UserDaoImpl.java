@@ -1,124 +1,68 @@
 package dao.user;
 
-import dao.Connect;
-import dao.user.UserDao;
+import lombok.SneakyThrows;
 import model.User;
+import utils.Props;
 
 import java.sql.*;
 
 public class UserDaoImpl implements UserDao {
-//    private Connect conn = new Connect();
-    private String url = "jdbc:MySQL://localhost:3306/my_schema?serverTimezone=UTC";
-    private String user = "root";
-    private String password = "root";
+    private final static String DB_URL = Props.getValue("db.url");
+    private final static String DB_USER = Props.getValue("db.user");
+    private final static String DB_PASSWORD = Props.getValue("db.password");
 
-
+    @SneakyThrows
     @Override
     public User findByName(String name) {
-        String sql = "SELECT login, password FROM user";
-
-//        conn.connection(url,user,password,sql);
-
-        try (Connection connection = DriverManager.getConnection(url, user, password);
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
-            while (resultSet.next()) {
-//                System.out.println(resultSet.getString("login") + " ");
-                if (name.equalsIgnoreCase(resultSet.getString("login"))) {
-                    return new User(name, resultSet.getString("password"));
-                }
+        ResultSet resultSet = getStatement().executeQuery("SELECT login, password from USER");
+        while (resultSet.next()) {
+            if (name.equalsIgnoreCase(resultSet.getString("login"))) {
+                return new User(name, resultSet.getString("password"));
             }
-        } catch (SQLException exc) {
-            exc.printStackTrace();
         }
         return null;
     }
 
+    @SneakyThrows
     @Override
-    public User createUser(String name, String password) {
-        String sql = "INSERT INTO my_schema.user(login,password) VALUES('" + name + "','" + password + "')";
-
-        try (Connection connection = DriverManager.getConnection(url,
-                user, password);
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
-            while (resultSet.next()) {
-//                String login = resultSet.getString("login");
-//                String pass = resultSet.getString("password");
-            }
-        } catch (SQLException exc) {
-            exc.printStackTrace();
-        }
-
-        return null;
+    public void createUser(User user) {
+        getStatement().executeUpdate("INSERT INTO USER(login, password) VALUES ('"
+                + user.getName() + "','" + user.getPassword() + "') ");
     }
 
+    @SneakyThrows
     @Override
-    public User deleteUser(String name) {
-        String sql = "delete from my_schema.user where login='" + name + "'";
-
-        try (Connection connection = DriverManager.getConnection(url,
-                user, password);
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
-            while (resultSet.next()) {
-                if (name.equalsIgnoreCase(resultSet.getString("login"))) {
-                    System.out.println("delete");
-//                    return new User(name, resultSet.getString("password"));
-                } else {
-                    System.out.println("not delete");
-                }
-            }
-        } catch (SQLException exc) {
-            exc.printStackTrace();
-        }
+    public User deleteUser(User user) {
+        getStatement().executeUpdate("DELETE from USER WHERE login='" + user.getName()
+                + "'and password='" + user.getPassword() + "'");
+        System.out.println("Deleted successful!");
         return null;
     }
 
+    @SneakyThrows
     @Override
-    public User setLogin(String name, String setName) {
-        String sql = "update my_schema.user set login='" + setName + "' where login='" + name + "'";
-
-        try (Connection connection = DriverManager.getConnection(url,
-                user, password);
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
-            while (resultSet.next()) {
-                if (name.equalsIgnoreCase(resultSet.getString("login"))) {
-                    System.out.println("update log");
-//                    return new User(name, resultSet.getString("password"));
-                } else {
-                    System.out.println("not update log");
-                }
-            }
-        } catch (SQLException exc) {
-            exc.printStackTrace();
-        }
+    public User setLogin(String oldName, String newName) {
+        getStatement().executeUpdate("UPDATE user SET login = '" + newName
+                + "' where login = '" + oldName + "'");
+        System.out.println("Change login!");
 
         return null;
     }
 
+    @SneakyThrows
     @Override
-    public User setPassword(String pass, String setPassword) {
-        String sql="update my_schema.user set login='" + setPassword + "' where login='" + pass + "'";
+    public User setPassword(String oldPassword, String newPassword) {
+        getStatement().executeUpdate("UPDATE user SET password = '" + newPassword
+                + "' where password = '" + oldPassword + "'");
+        System.out.println("Change password!");
 
-        try (Connection connection = DriverManager.getConnection(url,
-                user, password);
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
-            while (resultSet.next()) {
-                if (pass.equalsIgnoreCase(resultSet.getString("login"))) {
-                    System.out.println("update pass");
-//                    return new User(name, resultSet.getString("password"));
-                } else {
-                    System.out.println("not update pass");
-                }
-            }
-        } catch (SQLException exc) {
-            exc.printStackTrace();
-        }
         return null;
     }
 
-
+    private Statement getStatement() throws SQLException {
+        Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        return connection.createStatement();
+    }
 }
+
+

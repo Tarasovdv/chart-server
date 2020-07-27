@@ -5,8 +5,8 @@ import model.User;
 public interface UserDao {
 
     User findByName(String name);
-    User createUser(String name, String password);
-    User deleteUser(String name);
-    User setLogin(String name,String setName);
+    void createUser(User user);
+    User deleteUser(User user);
+    User setLogin(String oldName,String newName);
     User setPassword(String password, String setPassword);
 }
