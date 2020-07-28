@@ -6,7 +6,9 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class Message {
-    private final int id;
+//    private  int idMes;
     private String text;
-    private int idUser;
+//    private int idUser;
+    private User user;
+
 }

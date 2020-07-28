@@ -41,22 +41,19 @@ public class UserDaoImpl implements UserDao {
 
     @SneakyThrows
     @Override
-    public User setLogin(String oldName, String newName) {
-        getStatement().executeUpdate("UPDATE user SET login = '" + newName
-                + "' where login = '" + oldName + "'");
-        System.out.println("Change login!");
-
-        return null;
+    public void setLogin(User user, String name) {
+        getStatement().executeUpdate("UPDATE user SET login = '" + name
+                + "' WHERE login = '" + user.getName() + "'");
+        System.out.println("Change login");
     }
 
     @SneakyThrows
     @Override
-    public User setPassword(String oldPassword, String newPassword) {
-        getStatement().executeUpdate("UPDATE user SET password = '" + newPassword
-                + "' where password = '" + oldPassword + "'");
+    public void setPassword(User user, String password) {
+        getStatement().executeUpdate("UPDATE user SET password = '" + password
+                + "' WHERE password = '" + user.getPassword() + "'");
         System.out.println("Change password!");
 
-        return null;
     }
 
     private Statement getStatement() throws SQLException {

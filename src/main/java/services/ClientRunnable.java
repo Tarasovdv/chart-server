@@ -1,15 +1,19 @@
 package services;
 
+import dao.message.MessageDao;
+import dao.message.MessageDaoImpl;
 import dao.user.UserDao;
 import dao.user.UserDaoImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import model.Message;
 import model.User;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -17,8 +21,10 @@ public class ClientRunnable implements Runnable, Observer {
     private final Socket clientSocket;
     private final MyServer server;
     private User client;
+    private List<Message> text;
     //    private boolean isRegistered = false;
     private final UserDao dao = new UserDaoImpl();
+    private  final MessageDao messDao = new MessageDaoImpl();
 
 
     @SneakyThrows
@@ -47,6 +53,10 @@ public class ClientRunnable implements Runnable, Observer {
                 setPassword(messageFromUser);
 
 
+            } else if (messageFromUser.contains("Create Message: ") || messageFromUser.contains("Создать сообщение: ")) {
+                messDao.createMessage(new Message(messageFromUser,client));
+
+
             }else {
                 break;
             }
@@ -62,36 +72,55 @@ public class ClientRunnable implements Runnable, Observer {
 
     }
 
+
+//    @SneakyThrows
+//    private void createMessage(String messageFromUser){
+//        Message text = messageFromUser.split(" ")[2];
+////        String newName = messageFromUser.split(" ")[3];
+//        User userFromDao;
+//        if ((userFromDao = dao.findByName(oldName)) != null) {
+//            client = userFromDao;
+//            messDao.createMessage(text,client);
+//            notifyObserver("Change login done!");
+//        } else {
+//            notifyObserver("Change login failed, wrong login");
+//            server.deleteObserver(this);
+//            clientSocket.close();
+//        }
+//    }
     @SneakyThrows
     private void setLogin(String messageFromUser){
-        String oldName = messageFromUser.split(" ")[1];
-        String newName = messageFromUser.split(" ")[2];
+        String oldName = messageFromUser.split(" ")[2];
+        String newName = messageFromUser.split(" ")[3];
         User userFromDao;
         if ((userFromDao = dao.findByName(oldName)) != null) {
             client = userFromDao;
-            dao.setLogin(oldName,newName);
+            dao.setLogin(client,newName);
             notifyObserver("Change login done!");
-//            if (userFromDao.getName().equals(oldName)) {
-//            }
-//            else {
-//                notifyObserver("Authorization failed wrong password");
-//                server.deleteObserver(this);
-//                clientSocket.close();
-//            }
         } else {
             notifyObserver("Change login failed, wrong login");
             server.deleteObserver(this);
             clientSocket.close();
         }
-
     }
 
+    @SneakyThrows
     private void setPassword(String messageFromUser){
-        String oldPassword = messageFromUser.split(" ")[1];
-        String newPassword = messageFromUser.split(" ")[2];
-        dao.setLogin(oldPassword,newPassword);
-        notifyObserver("Change password done!");
-
+        String name = messageFromUser.split(" ")[2];
+        String oldPassword = messageFromUser.split(" ")[3];
+        String newPassword = messageFromUser.split(" ")[4];
+        User userFromDao;
+        if ((userFromDao = dao.findByName(name)) != null) {
+            if (userFromDao.getPassword().equals(oldPassword)) {
+                client = userFromDao;
+                dao.setPassword(client, newPassword);
+                notifyObserver("Change password done!");
+            }
+        } else {
+            notifyObserver("Change password failed, wrong login");
+            server.deleteObserver(this);
+            clientSocket.close();
+        }
     }
 
     @SneakyThrows
