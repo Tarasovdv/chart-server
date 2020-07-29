@@ -53,7 +53,7 @@ public class ClientRunnable implements Runnable, Observer {
                 setPassword(messageFromUser);
 
 
-            } else if (messageFromUser.contains("Create Message: ") || messageFromUser.contains("Создать сообщение: ")) {
+            } else if (messageFromUser.contains("->")) {
                 messDao.createMessage(new Message(messageFromUser,client));
 
 
@@ -147,12 +147,12 @@ public class ClientRunnable implements Runnable, Observer {
     }
 
     private void registration(String messageFromUser) {
-        System.out.println("Rega");
+        System.out.println("Registration:");
         client = new User(messageFromUser.split(" ")[1],
                 messageFromUser.split(" ")[2]);
         dao.createUser(client);
-        System.out.println("Rega for " + client.getName() + " success");
-        notifyObserver("Registration successfully");
+        System.out.println("Registration for " + client.getName() + " success!");
+        notifyObserver("Registration successfully!");
     }
 
     @SneakyThrows

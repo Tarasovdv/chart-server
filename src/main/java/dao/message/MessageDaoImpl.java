@@ -34,8 +34,8 @@ public class MessageDaoImpl implements MessageDao {
         ResultSet resultSet = getStatement().executeQuery("SELECT id FROM user WHERE login = '" + message.getUser().getName() + "'");
         resultSet.next();
         int userId = resultSet.getInt("id");
-        getStatement().executeUpdate("INSERT INTO message(id_mes,text,id_user) values ('" +
-                message.getText() + "','" + userId + "');");
+        getStatement().executeUpdate("INSERT INTO message(text,user_id) values ('" +
+                message.getText() + "'," + userId + ");");
     }
 
 
